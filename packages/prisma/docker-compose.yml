@@ -1,26 +1,26 @@
-# this file is a helper to run Cal.com locally
-# starts a postgres instance on port 5450 to use as a local db
+# helper to run Cal.com locally — local Postgres for prisma
 services:
   postgres:
-    image: postgres:13
+    image: postgres:15
     ports:
-      - "5450:5432" # expose pg on port 5450 to not collide with pg from elsewhere
+      - "5450:5432"
     restart: always
     volumes:
       - db_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: "cal-saml"
-      POSTGRES_PASSWORD: ""
+      POSTGRES_DB: "calendso"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_USER: "postgres"
       POSTGRES_HOST_AUTH_METHOD: trust
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d calendso"]
       interval: 10s
       timeout: 5s
       retries: 5
-  postgres_is_ready:
-    image: postgres
-    depends_on:
-      postgres:
-        condition: service_healthy
+  # postgres_is_ready:
+  #   image: postgres:15
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
 volumes:
   db_data:
